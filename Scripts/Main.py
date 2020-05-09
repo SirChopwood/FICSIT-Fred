@@ -10,7 +10,7 @@ import threading
 class Bot(discord.Client):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.git_listener = threading.Thread(target=WebhookListener.start_listener, args=[self])
+        self.git_listener = threading.PropagatingThread(target=WebhookListener.start_listener, args=[self])
         self.git_listener.daemon = True
         self.git_listener.start()
         self.queue_checker = self.loop.create_task(self.check_queue())

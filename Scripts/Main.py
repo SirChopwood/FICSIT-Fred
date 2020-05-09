@@ -35,12 +35,8 @@ class Bot(discord.Client):
             if os.path.exists("queue.txt"):
                 with open("queue.txt", "r+") as file:
                     data = json.load(file)
-                    if "commits" in data:
-                        print("test")
-                        await self.send_embed(CreateEmbed.push(data))
-                        print("Push Event posted for: " + data["repository"]["full_name"])
-                    else:
-                        print(data)
+                    embed = CreateEmbed.run(data)
+                    await self.send_embed(embed)
                 os.remove("queue.txt")
             else:
                 await asyncio.sleep(1)

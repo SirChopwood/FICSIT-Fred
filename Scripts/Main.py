@@ -6,11 +6,10 @@ import CreateEmbed
 import json
 import threading
 
-
 class Bot(discord.Client):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.git_listener = threading.PropagatingThread(target=WebhookListener.start_listener, args=[self])
+        self.git_listener = threading.Thread(target=WebhookListener.start_listener, args=[self])
         self.git_listener.daemon = True
         self.git_listener.start()
         self.queue_checker = self.loop.create_task(self.check_queue())
@@ -29,13 +28,19 @@ class Bot(discord.Client):
         channel = self.get_channel(708420623310913628)
         await channel.send(content=None, embed=embed_item)
 
+    def my_excepthook(self, type, value, traceback):
+        print('Unhandled error:', type, value, traceback)
+
     async def check_queue(self):
         await self.wait_until_ready()
         while True:
             if os.path.exists("queue.txt"):
                 with open("queue.txt", "r+") as file:
                     data = json.load(file)
-                    embed = CreateEmbed.run(data)
+                    try:
+                        embed = CreateEmbed.run(data)
+                    except:
+                        self.my_excepthook()
                     await self.send_embed(embed)
                 os.remove("queue.txt")
             else:

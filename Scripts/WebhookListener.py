@@ -51,7 +51,7 @@ def start_listener(bot):
 
     # Run Github webhook handling server
     try:
-        server = HTTPServer((Config.SERVER_HOST, Config.SERVER_PORT), MyHandler)
+        server = HTTPServer((Config.server_ip, Config.server_port), MyHandler)
         server.serve_forever()
     except KeyboardInterrupt:
         print("Exiting")

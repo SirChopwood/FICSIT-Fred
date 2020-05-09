@@ -6,6 +6,7 @@ import CreateEmbed
 import json
 import threading
 
+
 class Bot(discord.Client):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -16,8 +17,6 @@ class Bot(discord.Client):
 
     async def on_ready(self):
         print('We have logged in as {0.user}'.format(self))
-
-
 
     async def on_message(self, message):
         if message.author == self.user:
@@ -37,15 +36,14 @@ class Bot(discord.Client):
                 with open("queue.txt", "r+") as file:
                     data = json.load(file)
                     if "commits" in data:
+                        print("test")
                         await self.send_embed(CreateEmbed.push(data))
+                        print("Push Event posted for: " + data["repository"]["full_name"])
                     else:
                         print(data)
                 os.remove("queue.txt")
             else:
                 await asyncio.sleep(1)
-
-
-
 
 
 client = Bot()

@@ -156,15 +156,3 @@ class Bot(discord.Client):
 
 client = Bot()
 client.run('NzA4NDU0NjE0MzgyNjc0MDYy.XrXl0g.zAIStFSBMU_y2NzBPwH6xy_3Y3Y')
-
-"""
-        if "kronos" in message.content.lower() and len(message.author.roles) == 1 \
-                or "110838934644211712" in message.content.lower() and len(message.author.roles) == 1:
-
-            for word in Config[]:
-                if word in message.content.lower():
-                    await message.channel.send(
-                        "Hi " + message.author.mention +
-                        ", the Kronos Mod hasn't been updated for update 3 yet. Kronos is working on it, "
-                        "but no release date has been announced. You might be interested in the Pak Utility Mod "
-                        "instead, which does a lot of the same things.")"""

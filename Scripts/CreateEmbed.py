@@ -1,9 +1,10 @@
 import discord
 import datetime
-import Config
 import requests
 import json
 
+with open("Config.json", "r") as file:
+    Config = json.load(file)
 
 def run(data):
     embed = "Debug"
@@ -27,12 +28,12 @@ def push(data):
     repo_full_name = str(data["repository"]["name"] + "/" + data["ref"].lstrip("refs/heads"))
 
     embed = discord.Embed(title=str("Push created by __**" + data["sender"]["login"] + "**__"),
-                          colour=Config.action_colours["Push"], url=data["repository"]["url"],
+                          colour=Config["action_colours"]["Push"], url=data["repository"]["url"],
                           description=data["head_commit"]["message"],
                           timestamp=datetime.datetime.now())
 
     embed.set_thumbnail(url=data["sender"]["avatar_url"])
-    embed.set_author(name=repo_full_name, icon_url=Config.repo_pfps[repo_name])
+    embed.set_author(name=repo_full_name, icon_url=Config["repo pfps"][repo_name])
     embed.set_footer(text="FICSIT PR Dept. by Illya#5376",
                      icon_url="https://cdn.discordapp.com/avatars/110838934644211712/e486240daf6006f8de59bb866b74dcfc.png")
 
@@ -58,11 +59,11 @@ def contributer_added(data):
     repo_full_name = str(data["repository"]["name"] + data["ref"].lstrip("refs/heads"))
 
     embed = discord.Embed(title=str("__**" + data["member"]["login"] + "**__ has been added to the Repository."),
-                          colour=Config.action_colours["Misc"], url=data["repository"]["url"], description=" ",
+                          colour=Config["action_colours"]["Misc"], url=data["repository"]["url"], description=" ",
                           timestamp=datetime.datetime.now())
 
     embed.set_thumbnail(url=data["member"]["avatar_url"])
-    embed.set_author(name=repo_full_name, icon_url=Config.repo_pfps[repo_name])
+    embed.set_author(name=repo_full_name, icon_url=Config["repo pfps"][repo_name])
     embed.set_footer(text="FICSIT PR Dept. by Illya#5376",
                      icon_url="https://cdn.discordapp.com/avatars/110838934644211712/e486240daf6006f8de59bb866b74dcfc.png")
     return embed
@@ -73,12 +74,12 @@ def pull_request(data):
     repo_full_name = str(data["repository"]["name"] + "/" + data["pull_request"]["head"]["ref"])
 
     embed = discord.Embed(title=str("Pull Request " + data["action"] + " by __**" + data["sender"]["login"] + "**__"),
-                          colour=Config.action_colours["PR"], url=data["repository"]["url"],
+                          colour=Config["action_colours"]["PR"], url=data["repository"]["url"],
                           description=data["pull_request"]["title"],
                           timestamp=datetime.datetime.now())
 
     embed.set_thumbnail(url=data["sender"]["avatar_url"])
-    embed.set_author(name=repo_full_name, icon_url=Config.repo_pfps[repo_name])
+    embed.set_author(name=repo_full_name, icon_url=Config["repo pfps"][repo_name])
     embed.set_footer(text="FICSIT PR Dept. by Illya#5376",
                      icon_url="https://cdn.discordapp.com/avatars/110838934644211712/e486240daf6006f8de59bb866b74dcfc.png")
 
@@ -95,7 +96,26 @@ def pull_request(data):
 
 
 def mod(name):
-    data = requests.post("https://api.ficsit.app/v2/query", json={'query': Config.mod_query(name)})
+    # GraphQL Queries
+
+    query = str('''{
+      getMods(filter: { search: "''' + name + '''", order_by: last_version_date, order:desc}) {
+        mods {
+          name
+          authors {
+            user {
+              username
+            }
+          }
+          logo
+          short_description
+          full_description
+          last_version_date
+          id
+        }
+      }
+    }''')
+    data = requests.post("https://api.ficsit.app/v2/query", json={'query': query})
     data = json.loads(data.text)
     data = data["data"]["getMods"]["mods"]
 
@@ -116,7 +136,7 @@ def mod(name):
     date = str(data["last_version_date"][0:10] + " " + data["last_version_date"][11:19])
 
     embed = discord.Embed(title=data["name"],
-                          colour=Config.action_colours["Mod"], url=str("https://ficsit.app/mod/" + data["id"]),
+                          colour=Config["action_colours"]["Mod"], url=str("https://ficsit.app/mod/" + data["id"]),
                           description=str(data["short_description"] +
                                           "\n\n Last Updated: " + date +
                                           "\nCreated by: " + data["authors"][0]["user"]["username"]),
@@ -133,7 +153,7 @@ def desc(full_desc):
     if len(full_desc) > 1800:
         full_desc = full_desc[:1800]
     embed = discord.Embed(title="Description",
-                          colour=Config.action_colours["Mod"],
+                          colour=Config["action_colours"]["Mod"],
                           description=full_desc,
                           timestamp=datetime.datetime.now())
     embed.set_author(name="ficsit.app Mod Description")

@@ -1,9 +1,9 @@
 def start_listener(bot):
-
-    from http.server import BaseHTTPRequestHandler,HTTPServer
+    from http.server import BaseHTTPRequestHandler, HTTPServer
     import json
     import sys
-    import Config
+    with open("Config.json", "r") as file:
+        Config = json.load(file)
 
     global bot_ref
     bot_ref = bot
@@ -48,10 +48,9 @@ def start_listener(bot):
 
             return
 
-
     # Run Github webhook handling server
     try:
-        server = HTTPServer((Config.server_ip, Config.server_port), MyHandler)
+        server = HTTPServer((Config["server"]["ip"], Config["server"]["port"]), MyHandler)
         server.serve_forever()
     except KeyboardInterrupt:
         print("Exiting")

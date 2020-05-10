@@ -1,5 +1,5 @@
-# FICSIT PR Dept.
- FICSIT PR Dept. Github/Discord Bot
+# FICSIT Fred Dept.
+ FICSIT Fred Dept. Github/Discord Bot
 
 It works!!!
 Finally!

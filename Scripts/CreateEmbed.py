@@ -203,24 +203,8 @@ def command_list():
                     inline=False)
 
     for command in Config["known crashes"]:
-        keywords = ""
-        words = "\n" + command["additional words"][0]
-        del command["additional words"][0]
-
-        for keyword in command["keywords"]:
-            keywords = keywords + "\n" + keyword
-
-        for word in command["additional words"]:
-            words = words + ", " + word
-
-        if command["ignore members"]:
-            embed.add_field(name=str("**" + command["name"] + "**"), value=str(
-                "Keywords:\n```" + keywords + "```Additional Words:\n```" + words + "```Response:\n```" + command[
-                    "response"] + "```This response **ignores** anyone with T1+."), inline=False)
-        else:
-            embed.add_field(name=str("**" + command["name"] + "**"), value=str(
-                "Keywords:\n```" + keywords + "```Additional Words:\n```" + words + "```Response:\n```" + command[
-                    "response"] + "```This response applies to **everyone**."), inline=False)
+        embed.add_field(name=str("**" + command["name"] + "**"), value=str("Error:\n```" + command["crash"] + "```Response:\n```" + command["response"] + "```"),
+                        inline=False)
 
     embed.add_field(name="**__Media Only Channels__**",
                     value="*These channels only allow users to post files (inc. images) and embeds.*", inline=False)

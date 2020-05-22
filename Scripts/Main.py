@@ -78,19 +78,25 @@ class Bot(discord.Client):
                     if crash["crash"].lower() in line.decode().lower() and not responded:
                         responded = True
                         await message.channel.send(str(crash["response"].format(user=message.author.mention)))
+                        return
 
             # Pastebin links
             elif "https://pastebin.com/" in message.content:
-                pastebincontent = urlopen(
-                    "https://pastebin.com/raw/" + message.content.split("https://pastebin.com/")[1].split(" ")[
-                        0]).read()
+                try:
+                    pastebincontent
+                except NameError:
+                    pastebincontent = urlopen(
+                        "https://pastebin.com/raw/" + message.content.split("https://pastebin.com/")[1].split(" ")[
+                            0]).read()
                 if crash["crash"].lower() in pastebincontent.decode().lower() and not responded:
                     responded = True
                     await message.channel.send(str(crash["response"].format(user=message.author.mention)))
+                    return
 
             elif crash["crash"].lower() in message.content.lower() and not responded:
                 responded = True
                 await message.channel.send(str(crash["response"].format(user=message.author.mention)))
+                return
 
         # Media Only Channels
         for automation in Config["media only channels"]:
@@ -363,11 +369,13 @@ class Bot(discord.Client):
             name = await self.wait_for('message', timeout=30.0)
             name = name.content
 
-            await message.channel.send("What is the string to search for in the crash logs ? e.g. \"Assertion failed: ObjectA == nullptr\"")
+            await message.channel.send(
+                "What is the string to search for in the crash logs ? e.g. \"Assertion failed: ObjectA == nullptr\"")
             crash = await self.wait_for('message', timeout=60.0)
             crash = crash.content
 
-            await message.channel.send("What response do you want it to provide? e.g. ``Thanks for saying my keywords {user}`` (use {user} to ping the user)")
+            await message.channel.send(
+                "What response do you want it to provide? e.g. ``Thanks for saying my keywords {user}`` (use {user} to ping the user)")
             response = await self.wait_for('message', timeout=60.0)
             response = response.content
 

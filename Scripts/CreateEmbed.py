@@ -199,7 +199,7 @@ def command_list():
                     "response"] + "```This response applies to **everyone**."), inline=False)
 
     embed.add_field(name="**__Known Crashes__**",
-                    value="*These commands trigger when one Keyword and one Additional Word are sent in a message.*",
+                    value="*These commands trigger when a string is present in a message, pastebin or .txt/.log file.*",
                     inline=False)
 
     for command in Config["known crashes"]:

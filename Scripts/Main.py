@@ -5,6 +5,7 @@ import asyncio
 import CreateEmbed
 import json
 import threading
+from urllib.request import urlopen
 
 with open("Config.json", "r") as file:
     Config = json.load(file)
@@ -130,6 +131,75 @@ class Bot(discord.Client):
                     index += 1
             await message.channel.send("Response could not be found!")
 
+        elif message.content.startswith(">add crash"):
+            access = False
+            for role in message.author.roles:
+                if role.name == "T3 Member" or role.name == "Moderator":
+                    access = True
+
+            if access == False:
+                return
+
+            await message.channel.send("What would you like to name this known crash? e.g. ``CommandDave``")
+            name = await self.wait_for('message', timeout=30.0)
+            name = name.content
+
+            await message.channel.send("What is the string to search for in the crash logs ? e.g. \"Assertion failed: ObjectA == nullptr\"")
+            crash = await self.wait_for('message', timeout=60.0)
+            crash = crash.content
+
+            await message.channel.send("What response do you want it to provide? e.g. ``Thanks for saying my keywords {user}`` (use {user} to ping the user)")
+            response = await self.wait_for('message', timeout=60.0)
+            response = response.content
+
+            Config["known crashes"].append({"name": name, "crash": crash, "response": response})
+            json.dump(Config, open("Config.json", "w"))
+            await message.channel.send("Known crash '" + name + "' added.")
+
+        elif message.content.startswith(">remove crash"):
+            access = False
+            for role in message.author.roles:
+                if role.name == "T3 Member" or role.name == "Moderator":
+                    access = True
+
+            if access == False:
+                return
+
+            await message.channel.send("Which known crash do you want to remove?")
+            name = await self.wait_for('message', timeout=30.0)
+            name = name.content
+
+            index = 0
+            for crash in Config["known crashes"]:
+                if crash["name"] == name:
+                    del Config["known crashes"][index]
+                    json.dump(Config, open("Config.json", "w"))
+                    await message.channel.send("Crash Removed!")
+                    return
+                else:
+                    index += 1
+            await message.channel.send("Crash could not be found!")
+
+        elif message.attachments and (".log" in message.attachments[0].filename or ".txt" in message.attachments[0].filename):
+            crashlog = await message.attachments[0].to_file()
+            crashlog = crashlog.fp
+            for crash in Config["known crashes"]:
+                for line in crashlog:
+                    if crash["crash"].lower() in line.decode().lower() and not responded:
+                        responded = True
+                        await message.channel.send(str(crash["response"].format(user=message.author.mention)))
+
+        elif "https://pastebin.com/" in message.content:
+            pastebincontent = urlopen("https://pastebin.com/raw/" + message.content.split("https://pastebin.com/")[1].split(" ")[0]).read()
+            for crash in Config["known crashes"]:
+                if crash["crash"].lower() in pastebincontent.decode().lower() and not responded:
+                    responded = True
+                    await message.channel.send(str(crash["response"].format(user=message.author.mention)))
+
+        for crash in Config["known crashes"]:
+            if crash["crash"].lower() in message.content.lower() and not responded:
+                responded = True
+                await message.channel.send(str(crash["response"].format(user=message.author.mention)))
 
     async def send_embed(self, embed_item):
         channel = self.get_channel(708420623310913628)

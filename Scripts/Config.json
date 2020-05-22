@@ -1,7 +1,7 @@
 {
   "server": {
     "ip": "192.168.0.30",
-    "port": 6969
+    "port": 7000
   },
   "action colours": {
     "Push": 16098851,
@@ -40,5 +40,92 @@
       "response": "Hi, {user} the Kronos Mod hasn't been updated for update 3 yet. Kronos is working on it, but no release date has been announced. You might be interested in the Pak Utility Mod instead, which does a lot of the same things.",
       "ignore members": true
     }
+  ],
+  "media only channels": [
+    {
+      "name": "Screenshots",
+      "id": "709509235028918334"
+    }
+  ],
+  "commands": [
+    {
+      "command": ">generator",
+      "response": "../Images/Generators.png",
+      "media": true
+    },
+    {
+      "command": ">redirector",
+      "response": "../Images/Redirectors.png",
+      "media": true
+    },
+    {
+      "command": ">install",
+      "response": "../Images/Install.png",
+      "media": true
+    },
+    {
+      "command": ">docs",
+      "response": "https://docs.ficsit.app/",
+      "media": false
+    },
+    {
+      "command": "Valar morghulis",
+      "response": "Valar dohaeris!",
+      "media": false
+    }
+  ],
+  "special commands": [
+    {
+      "command": ">mod (name)",
+      "response": "Searches for (name) in the SMR database, returning the details of the mod if it is found. If multiple are found, it will state so. Same for if none are found. Only the user can react to the clipboard, and if so within 60s, will post the full description of said mod below."
+    },
+    {
+      "command": ">help",
+      "response": "Displays the menu you are looking at right now... funny that..."
+    },
+    {
+      "command": ">add response",
+      "response": "[MOD] Creates a prompt to add an automated response."
+    },
+    {
+      "command": ">remove response",
+      "response": "[MOD] Creates a prompt to remove an automated response."
+    },
+    {
+      "command": ">add media only",
+      "response": "[MOD] Creates a prompt to add a media only channel."
+    },
+    {
+      "command": ">remove media only",
+      "response": "[MOD] Creates a prompt to remove a media only channel."
+    },
+    {
+      "command": ">add command",
+      "response": "[MOD] Creates a prompt to add a command."
+    },
+    {
+      "command": ">remove command",
+      "response": "[MOD] Creates a prompt to remove a command."
+    }
+  ],
+  "role assignments": [
+    {
+      "command": ">t1",
+      "role": "T1 Member",
+      "response": "Congratulations... you're not a pleb anymore!",
+      "mod assignable": false
+    },
+    {
+      "command": ">t2",
+      "role": "T2 Member",
+      "response": "**YOU GOT PROMOOOOOOOOTEEEEED! :D**\nhttps://www.youtube.com/watch?v=S4YIl4BhO3E",
+      "mod assignable": true
+    }
+  ],
+  "mod roles": [
+    "T3 Member",
+    "FICSIT Staff",
+    "Coffeestainer VIP",
+    "Moderator"
   ]
 }

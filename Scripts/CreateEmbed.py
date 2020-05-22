@@ -6,6 +6,8 @@ import json
 with open("Config.json", "r") as file:
     Config = json.load(file)
 
+
+# Github Update Embed Formats
 def run(data):
     embed = "Debug"
     if "commits" in data:
@@ -22,7 +24,6 @@ def run(data):
 
 
 def push(data):
-
     repo_name = data["repository"]["full_name"]
     repo_full_name = str(data["repository"]["name"] + "/" + data["ref"].lstrip("refs/heads"))
 
@@ -96,6 +97,7 @@ def pull_request(data):
     return embed
 
 
+# SMR Lookup Embed Formats
 def mod(name):
     # GraphQL Queries
 
@@ -160,4 +162,66 @@ def desc(full_desc):
     embed.set_author(name="ficsit.app Mod Description")
     embed.set_footer(text="FICSIT Fred by Illya#5376",
                      icon_url="https://cdn.discordapp.com/avatars/110838934644211712/e486240daf6006f8de59bb866b74dcfc.png")
+    return embed
+
+
+# Generic Bot Embed Formats
+def command_list():
+    embed = discord.Embed(title=str("What I do..."), colour=Config["action colours"]["Misc"],
+                          timestamp=datetime.datetime.now())
+
+    embed.set_author(name="FICSIT Fred",
+                     icon_url="https://cdn.discordapp.com/attachments/599990474668769290/708729597910581299/ficsitfred.png")
+    embed.set_footer(text="FICSIT Fred by Illya#5376",
+                     icon_url="https://cdn.discordapp.com/avatars/110838934644211712/e486240daf6006f8de59bb866b74dcfc.png")
+
+    embed.add_field(name="**__Automated Responses__**",
+                    value="*These commands trigger when one Keyword and one Additional Word are sent in a message.*",
+                    inline=False)
+
+    for command in Config["automated responses"]:
+        keywords = ""
+        words = "\n" + command["additional words"][0]
+        del command["additional words"][0]
+
+        for keyword in command["keywords"]:
+            keywords = keywords + "\n" + keyword
+
+        for word in command["additional words"]:
+            words = words + ", " + word
+
+        if command["ignore members"]:
+            embed.add_field(name=str("**" + command["name"] + "**"), value=str(
+                "Keywords:\n```" + keywords + "```Additional Words:\n```" + words + "```Response:\n```" + command[
+                    "response"] + "```This response **ignores** anyone with T1+."), inline=False)
+        else:
+            embed.add_field(name=str("**" + command["name"] + "**"), value=str(
+                "Keywords:\n```" + keywords + "```Additional Words:\n```" + words + "```Response:\n```" + command[
+                    "response"] + "```This response applies to **everyone**."), inline=False)
+
+    embed.add_field(name="**__Media Only Channels__**",
+                    value="*These channels only allow users to post files (inc. images) and embeds.*", inline=False)
+
+    for command in Config["media only channels"]:
+        embed.add_field(name=str("**" + command["name"] + "**"), value=str("```" + command["id"] + "```"), inline=False)
+
+    embed.add_field(name="**__Commands__**",
+                    value="*These are normal commands that can be called by stating their name.*",
+                    inline=False)
+
+    for command in Config["commands"]:
+        if command["media"]:
+            embed.add_field(name=str("**" + command["command"] + "**"), value="```An image is posted.```", inline=False)
+        else:
+            embed.add_field(name=str("**" + command["command"] + "**"), value=str("```" + command["response"] + "```"),
+                            inline=False)
+
+    embed.add_field(name="**__Special Commands__**",
+                    value="*These are normal commands that can be called by stating their name.*",
+                    inline=False)
+
+    for command in Config["special commands"]:
+        embed.add_field(name=str("**" + command["command"] + "**"), value=str("```" + command["response"] + "```"),
+                        inline=False)
+
     return embed

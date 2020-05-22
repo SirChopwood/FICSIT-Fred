@@ -29,20 +29,24 @@ def start_listener(bot):
             content_len = int(self.headers['content-length'])
             event_type = self.headers['x-github-event']
 
+            # Return error if some moron set the payload type to be that other weird format instead of a normal fucking json!
             if content_type != "application/json":
                 self.send_error(400, "Bad Request", "Expected a JSON request")
                 return
 
+            # Decrypt that shit into a json, idk wtf it means otherwise!
             data = self.rfile.read(content_len)
             if sys.version_info < (3, 6):
                 data = data.decode()
             data = json.loads(data)
 
+            # Respond to GitHub saying the payload arrived, as it fucking should!
             self.send_response(200)
             self.send_header('content-type', 'text/html')
             self.end_headers()
             self.wfile.write(bytes('The fecking machine returned the message ok!?', 'utf-8'))
 
+            # Save that shit!
             with open("queue.txt", "w") as file:
                 json.dump(data, file)
 

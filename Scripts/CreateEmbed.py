@@ -6,7 +6,6 @@ import json
 with open("Config.json", "r") as file:
     Config = json.load(file)
 
-
 # Github Update Embed Formats
 def run(data):
     embed = "Debug"
@@ -180,6 +179,30 @@ def command_list():
                     inline=False)
 
     for command in Config["automated responses"]:
+        keywords = ""
+        words = "\n" + command["additional words"][0]
+        del command["additional words"][0]
+
+        for keyword in command["keywords"]:
+            keywords = keywords + "\n" + keyword
+
+        for word in command["additional words"]:
+            words = words + ", " + word
+
+        if command["ignore members"]:
+            embed.add_field(name=str("**" + command["name"] + "**"), value=str(
+                "Keywords:\n```" + keywords + "```Additional Words:\n```" + words + "```Response:\n```" + command[
+                    "response"] + "```This response **ignores** anyone with T1+."), inline=False)
+        else:
+            embed.add_field(name=str("**" + command["name"] + "**"), value=str(
+                "Keywords:\n```" + keywords + "```Additional Words:\n```" + words + "```Response:\n```" + command[
+                    "response"] + "```This response applies to **everyone**."), inline=False)
+
+    embed.add_field(name="**__Known Crashes__**",
+                    value="*These commands trigger when one Keyword and one Additional Word are sent in a message.*",
+                    inline=False)
+
+    for command in Config["known crashes"]:
         keywords = ""
         words = "\n" + command["additional words"][0]
         del command["additional words"][0]

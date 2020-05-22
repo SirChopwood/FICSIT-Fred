@@ -1,8 +1,4 @@
 {
-  "server": {
-    "ip": "192.168.0.30",
-    "port": 7000
-  },
   "action colours": {
     "Push": 16098851,
     "PR": 9442302,
@@ -127,5 +123,12 @@
     "FICSIT Staff",
     "Coffeestainer VIP",
     "Moderator"
+  ],
+  "known crashes": [
+    {
+      "name": "c++",
+      "crash": "Assertion failed: ObjectA == nullptr || ObjectA->IsA<UClass>()",
+      "response": "Hi {user}, thing thing thing"
+    }
   ]
 }

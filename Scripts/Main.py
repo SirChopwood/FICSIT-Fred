@@ -5,6 +5,7 @@ import asyncio
 import CreateEmbed
 import json
 import threading
+from urllib.request import urlopen
 
 # server = 192.168.0.4:6969 | computer = 192.168.0.30:7000
 
@@ -65,6 +66,31 @@ class Bot(discord.Client):
                                 responded = True
                                 await message.channel.send(
                                     str(automation["response"].format(user=message.author.mention)))
+
+        # Crash Responses
+        for crash in Config["known crashes"]:
+            # .log or .txt Files
+            if message.attachments and (
+                    ".log" in message.attachments[0].filename or ".txt" in message.attachments[0].filename):
+                crashlog = await message.attachments[0].to_file()
+                crashlog = crashlog.fp
+                for line in crashlog:
+                    if crash["crash"].lower() in line.decode().lower() and not responded:
+                        responded = True
+                        await message.channel.send(str(crash["response"].format(user=message.author.mention)))
+
+            # Pastebin links
+            elif "https://pastebin.com/" in message.content:
+                pastebincontent = urlopen(
+                    "https://pastebin.com/raw/" + message.content.split("https://pastebin.com/")[1].split(" ")[
+                        0]).read()
+                if crash["crash"].lower() in pastebincontent.decode().lower() and not responded:
+                    responded = True
+                    await message.channel.send(str(crash["response"].format(user=message.author.mention)))
+
+            elif crash["crash"].lower() in message.content.lower() and not responded:
+                responded = True
+                await message.channel.send(str(crash["response"].format(user=message.author.mention)))
 
         # Media Only Channels
         for automation in Config["media only channels"]:
@@ -163,7 +189,6 @@ class Bot(discord.Client):
                         "Send us proof and we will unban you!\n *- The Satisfactory Modding Discord Staff Team*")
                     await message.guild.ban(target, reason=str("Pirate - Banned by: " + message.author.name))
                     await message.channel.send(content=None, file=discord.File("../Images/Ban.gif"))
-
 
         # Config Commands
         elif message.content.startswith(">add response"):
@@ -325,6 +350,57 @@ class Bot(discord.Client):
                     index += 1
             await message.channel.send("Command could not be found!")
 
+        elif message.content.startswith(">add crash"):
+            access = False
+            for role in message.author.roles:
+                if role.name == "T3 Member" or role.name == "Moderator":
+                    access = True
 
+            if access == False:
+                return
+
+            await message.channel.send("What would you like to name this known crash? e.g. ``CommandDave``")
+            name = await self.wait_for('message', timeout=30.0)
+            name = name.content
+
+            await message.channel.send("What is the string to search for in the crash logs ? e.g. \"Assertion failed: ObjectA == nullptr\"")
+            crash = await self.wait_for('message', timeout=60.0)
+            crash = crash.content
+
+            await message.channel.send("What response do you want it to provide? e.g. ``Thanks for saying my keywords {user}`` (use {user} to ping the user)")
+            response = await self.wait_for('message', timeout=60.0)
+            response = response.content
+
+            Config["known crashes"].append({"name": name, "crash": crash, "response": response})
+            json.dump(Config, open("Config.json", "w"))
+            await message.channel.send("Known crash '" + name + "' added.")
+
+        elif message.content.startswith(">remove crash"):
+            access = False
+            for role in message.author.roles:
+                if role.name == "T3 Member" or role.name == "Moderator":
+                    access = True
+
+            if access == False:
+                return
+
+            await message.channel.send("Which known crash do you want to remove?")
+            name = await self.wait_for('message', timeout=30.0)
+            name = name.content
+
+            index = 0
+            for crash in Config["known crashes"]:
+                if crash["name"] == name:
+                    del Config["known crashes"][index]
+                    json.dump(Config, open("Config.json", "w"))
+                    await message.channel.send("Crash Removed!")
+                    return
+                else:
+                    index += 1
+            await message.channel.send("Crash could not be found!")
+
+
+with open("Secrets.json", "r") as Secrets:
+    Secrets = json.load(Secrets)
 client = Bot()
-client.run('NzA4NDU0NjE0MzgyNjc0MDYy.XrXl0g.zAIStFSBMU_y2NzBPwH6xy_3Y3Y')
+client.run(Secrets["token"])

@@ -124,3 +124,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 Scripts/queue.txt
+Scripts/Secrets.json

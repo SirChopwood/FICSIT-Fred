@@ -125,3 +125,7 @@ dmypy.json
 .pyre/
 Scripts/queue.txt
 Scripts/Secrets.json
+
+#IDE stuff
+.idea/
+*.xml

@@ -232,3 +232,57 @@ def command_list():
                         inline=False)
 
     return embed
+
+def message_edited(before, after):
+    embed = discord.Embed(colour=discord.Colour(0x5dc0),
+                          description="[**Message edited**](" + before.jump_url + ") in " + before.channel.mention)
+
+    embed.set_author(name=before.author.name + "#" + before.author.discriminator, icon_url=before.author.avatar_url)
+    embed.set_footer(text="Author ID : " + str(before.author.id) + " | Message ID : " + str(before.id))
+
+    embed.add_field(name="Before", value=before.content, inline=False)
+    embed.add_field(name="After", value=after.content, inline=False)
+
+    return embed
+
+def message_edited(before, after):
+    embed = discord.Embed(colour=discord.Colour(38399),description=before.author.mention + " **edited their [message](" + before.jump_url + ") in **" + before.channel.mention)
+
+    embed.set_author(name=before.author.name + "#" + before.author.discriminator, icon_url=before.author.avatar_url)
+    embed.set_footer(text="Author ID : " + str(before.author.id) + " | Message ID : " + str(before.id))
+
+    embed.add_field(name="Before", value=before.content, inline=False)
+    embed.add_field(name="After", value=after.content, inline=False)
+
+    return embed
+
+def message_deleted(message):
+    embed = discord.Embed(description="**[Message](" + message.jump_url + ") by " + message.author.mention + " in " + message.channel.mention + " was deleted**\n" + message.content, colour=discord.Colour(15408413))
+
+    embed.set_author(name=message.author.name + "#" + message.author.discriminator, icon_url=message.author.avatar_url)
+    embed.set_footer(text="Author ID : " + str(message.author.id) + " | Message ID : " + str(message.id))
+
+    return embed
+
+def user_left(user):
+    embed = discord.Embed(description=user.mention +" **left the server**", colour=discord.Colour(15408413))
+
+    embed.set_author(name=user.name + "#" + user.discriminator, icon_url=user.avatar_url)
+    embed.set_footer(text="User ID : " + str(user.id))
+
+    return embed
+
+def member_nicked(before, after):
+    if not before.nick:
+        before.nick = before.name
+    if not after.nick:
+        after.nick = after.name
+    embed = discord.Embed(colour=discord.Colour(38399),description=before.mention + " **changed their nick**")
+
+    embed.set_author(name=before.name + "#" + before.discriminator, icon_url=before.avatar_url)
+    embed.set_footer(text="Author ID : " + str(before.id))
+
+    embed.add_field(name="Before", value=before.nick, inline=False)
+    embed.add_field(name="After", value=after.nick, inline=False)
+
+    return embed
